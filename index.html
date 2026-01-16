@@ -2522,7 +2522,112 @@ showNotification(`✅ ${t('paymentReport')} ${t('invoiceGenerated')}`, 'success'
         }
       }
     }
+/* ==========================================
+   🌙 MODE SOMBRE / CLAIR
+   ========================================== */
 
+// 1. AJOUTER CE CSS DANS VOTRE SECTION <style>
+
+/* Variables de couleurs */
+:root {
+  --bg-primary: rgba(0,0,0,0.85);
+  --bg-secondary: rgba(30,30,35,0.88);
+  --text-primary: #ffffff;
+  --text-secondary: #e5e7eb;
+  --border-color: rgba(255,255,255,0.15);
+}
+
+body.light-mode {
+  --bg-primary: rgba(255,255,255,0.95);
+  --bg-secondary: rgba(255,255,255,0.98);
+  --text-primary: #1a1a1a;
+  --text-secondary: #4b5563;
+  --border-color: rgba(0,0,0,0.15);
+}
+
+/* Mode clair */
+body.light-mode {
+  background: url('Background.png') no-repeat center center fixed;
+  background-size: cover;
+  color: #1a1a1a;
+}
+
+body.light-mode::before {
+  background: linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(240,240,245,0.9) 50%, rgba(255,255,255,0.95) 100%);
+}
+
+body.light-mode .bg-white {
+  background-color: rgba(255,255,255,0.98) !important;
+  border: 1px solid rgba(0,0,0,0.1);
+  box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+}
+
+body.light-mode .bg-white p, 
+body.light-mode .bg-white span, 
+body.light-mode .bg-white h2, 
+body.light-mode .bg-white h3 {
+  color: #1a1a1a !important;
+}
+
+body.light-mode .text-gray-600, 
+body.light-mode .text-gray-500, 
+body.light-mode .text-gray-700 {
+  color: #4b5563 !important;
+}
+
+body.light-mode input, 
+body.light-mode textarea, 
+body.light-mode select {
+  color: #1a1a1a !important;
+  background-color: rgba(255,255,255,0.95) !important;
+  border: 2px solid rgba(0,0,0,0.2) !important;
+}
+
+body.light-mode input::placeholder, 
+body.light-mode textarea::placeholder {
+  color: #9ca3af !important;
+}
+
+/* Bouton toggle mode */
+.theme-toggle {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  width: 60px;
+  height: 60px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+  z-index: 1000;
+  transition: all 0.3s ease;
+}
+
+.theme-toggle:hover {
+  transform: scale(1.1);
+  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+}
+
+.theme-toggle:active {
+  transform: scale(0.95);
+}
+
+.theme-icon {
+  font-size: 24px;
+  transition: transform 0.3s ease;
+}
+
+body.light-mode .theme-toggle {
+  background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+}
+
+/* Animation du changement de thème */
+body.transitioning * {
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease !important;
+}
     init();
   </script>
 </body>
