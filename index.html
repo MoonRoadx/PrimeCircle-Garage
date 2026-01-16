@@ -130,6 +130,128 @@
       input, textarea, select { font-size: 16px !important; }
       button { min-height: 44px; }
     }
+    <style>
+  /* ... TOUT VOTRE CSS EXISTANT ... */
+  
+  @media (max-width: 768px) {
+    body { font-size: 14px; }
+    .bg-white { padding: 12px !important; }
+    input, textarea, select { font-size: 16px !important; }
+    button { min-height: 44px; }
+  }
+  
+  /* ========================================
+     🎨 AMÉLIORATIONS UX - MODE SOMBRE/CLAIR
+     ======================================== */
+  
+  /* Variables de couleurs */
+  :root {
+    --bg-primary: rgba(0,0,0,0.85);
+    --bg-secondary: rgba(30,30,35,0.88);
+    --text-primary: #ffffff;
+    --text-secondary: #e5e7eb;
+    --border-color: rgba(255,255,255,0.15);
+  }
+
+  body.light-mode {
+    --bg-primary: rgba(255,255,255,0.95);
+    --bg-secondary: rgba(255,255,255,0.98);
+    --text-primary: #1a1a1a;
+    --text-secondary: #4b5563;
+    --border-color: rgba(0,0,0,0.15);
+  }
+
+  /* Mode clair */
+  body.light-mode {
+    background: url('Background.png') no-repeat center center fixed;
+    background-size: cover;
+    color: #1a1a1a;
+  }
+
+  body.light-mode::before {
+    background: linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(240,240,245,0.9) 50%, rgba(255,255,255,0.95) 100%);
+  }
+
+  body.light-mode .bg-white {
+    background-color: rgba(255,255,255,0.98) !important;
+    border: 1px solid rgba(0,0,0,0.1);
+    box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+  }
+
+  body.light-mode .bg-white p, 
+  body.light-mode .bg-white span, 
+  body.light-mode .bg-white h2, 
+  body.light-mode .bg-white h3 {
+    color: #1a1a1a !important;
+  }
+
+  body.light-mode .text-gray-600, 
+  body.light-mode .text-gray-500, 
+  body.light-mode .text-gray-700 {
+    color: #4b5563 !important;
+  }
+
+  body.light-mode input, 
+  body.light-mode textarea, 
+  body.light-mode select {
+    color: #1a1a1a !important;
+    background-color: rgba(255,255,255,0.95) !important;
+    border: 2px solid rgba(0,0,0,0.2) !important;
+  }
+
+  body.light-mode input::placeholder, 
+  body.light-mode textarea::placeholder {
+    color: #9ca3af !important;
+  }
+
+  /* Bouton toggle mode */
+  .theme-toggle {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 60px;
+    height: 60px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    z-index: 1000;
+    transition: all 0.3s ease;
+  }
+
+  .theme-toggle:hover {
+    transform: scale(1.1);
+    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+  }
+
+  .theme-toggle:active {
+    transform: scale(0.95);
+  }
+
+  .theme-icon {
+    font-size: 24px;
+    transition: transform 0.3s ease;
+  }
+
+  body.light-mode .theme-toggle {
+    background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+  }
+
+  /* Animation du changement de thème */
+  body.transitioning * {
+    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease !important;
+  }
+
+  /* Animation shake pour erreurs */
+  @keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    10%, 30%, 50%, 70%, 90% { transform: translateX(-10px); }
+    20%, 40%, 60%, 80% { transform: translateX(10px); }
+  }
+  
   </style>
 </head>
 <body>
@@ -2501,6 +2623,10 @@ showNotification(`✅ ${t('paymentReport')} ${t('invoiceGenerated')}`, 'success'
       
       render();
       
+      // ========== INITIALISER LES AMÉLIORATIONS UX ==========
+      initUXImprovements();
+      // =======================================================
+      
       window.addEventListener('online', () => {
         isOffline = false;
         showOfflineIndicator();
@@ -2522,6 +2648,297 @@ showNotification(`✅ ${t('paymentReport')} ${t('invoiceGenerated')}`, 'success'
         }
       }
     }
+
+    /* ==========================================
+       🎨 CODE UX IMPROVEMENTS
+       ========================================== */
+
+    // ==========================================
+    // 🌙 1. MODE SOMBRE / CLAIR
+    // ==========================================
+
+    // Initialiser le thème au chargement
+    function initTheme() {
+      const savedTheme = localStorage.getItem('theme') || 'dark';
+      if (savedTheme === 'light') {
+        document.body.classList.add('light-mode');
+      }
+      updateThemeIcon();
+    }
+
+    // Toggle entre dark et light
+    function toggleTheme() {
+      // Animation de transition
+      document.body.classList.add('transitioning');
+      
+      // Toggle le mode
+      document.body.classList.toggle('light-mode');
+      
+      // Sauvegarder la préférence
+      const isLight = document.body.classList.contains('light-mode');
+      localStorage.setItem('theme', isLight ? 'light' : 'dark');
+      
+      // Mettre à jour l'icône
+      updateThemeIcon();
+      
+      // Notification
+      showNotification(isLight ? '☀️ Mode clair activé' : '🌙 Mode sombre activé');
+      
+      // Retirer l'animation après
+      setTimeout(() => {
+        document.body.classList.remove('transitioning');
+      }, 300);
+    }
+
+    // Mettre à jour l'icône du bouton
+    function updateThemeIcon() {
+      const themeButton = document.getElementById('themeToggle');
+      if (!themeButton) return;
+      
+      const isLight = document.body.classList.contains('light-mode');
+      themeButton.innerHTML = `<span class="theme-icon">${isLight ? '🌙' : '☀️'}</span>`;
+    }
+
+    // Ajouter le bouton de thème au HTML
+    function addThemeToggleButton() {
+      const existingButton = document.getElementById('themeToggle');
+      if (existingButton) return;
+      
+      const button = document.createElement('div');
+      button.id = 'themeToggle';
+      button.className = 'theme-toggle';
+      button.onclick = toggleTheme;
+      button.innerHTML = '<span class="theme-icon">☀️</span>';
+      button.title = 'Changer de thème';
+      
+      document.body.appendChild(button);
+      updateThemeIcon();
+    }
+
+    // ==========================================
+    // 🎤 2. DICTÉE VOCALE
+    // ==========================================
+
+    let recognition = null;
+    let isRecording = false;
+
+    // Initialiser la reconnaissance vocale
+    function initSpeechRecognition() {
+      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+      
+      if (!SpeechRecognition) {
+        console.warn('⚠️ Reconnaissance vocale non supportée par ce navigateur');
+        return false;
+      }
+      
+      recognition = new SpeechRecognition();
+      recognition.continuous = false;
+      recognition.interimResults = false;
+      recognition.maxAlternatives = 1;
+      recognition.lang = currentLang === 'it' ? 'it-IT' : currentLang === 'fr' ? 'fr-FR' : 'en-US';
+      
+      recognition.onstart = () => {
+        isRecording = true;
+        updateVoiceButton(true);
+        showNotification('🎤 Enregistrement en cours...', 'info');
+      };
+      
+      recognition.onresult = (event) => {
+        const transcript = event.results[0][0].transcript;
+        const activeElement = document.activeElement;
+        
+        if (activeElement && (activeElement.tagName === 'TEXTAREA' || activeElement.tagName === 'INPUT')) {
+          activeElement.value += (activeElement.value ? ' ' : '') + transcript;
+        }
+        
+        showNotification(`✅ "${transcript}"`, 'success');
+      };
+      
+      recognition.onerror = (event) => {
+        console.error('Erreur reconnaissance vocale:', event.error);
+        let errorMessage = '❌ Erreur de reconnaissance vocale';
+        if (event.error === 'no-speech') errorMessage = '⚠️ Aucune parole détectée';
+        else if (event.error === 'not-allowed') errorMessage = '⚠️ Microphone non autorisé';
+        showNotification(errorMessage, 'error');
+        isRecording = false;
+        updateVoiceButton(false);
+      };
+      
+      recognition.onend = () => {
+        isRecording = false;
+        updateVoiceButton(false);
+      };
+      
+      return true;
+    }
+
+    // Démarrer/Arrêter la dictée
+    function toggleVoiceRecording(targetElementId) {
+      if (!recognition) {
+        const initialized = initSpeechRecognition();
+        if (!initialized) {
+          showNotification('❌ Reconnaissance vocale non disponible', 'error');
+          return;
+        }
+      }
+      
+      if (isRecording) {
+        recognition.stop();
+        return;
+      }
+      
+      if (targetElementId) {
+        const element = document.getElementById(targetElementId);
+        if (element) element.focus();
+      }
+      
+      try {
+        recognition.start();
+      } catch (error) {
+        console.error('Erreur démarrage reconnaissance:', error);
+        showNotification('❌ Impossible de démarrer le microphone', 'error');
+      }
+    }
+
+    // Mettre à jour l'apparence du bouton
+    function updateVoiceButton(recording) {
+      const buttons = document.querySelectorAll('.voice-button');
+      buttons.forEach(button => {
+        if (recording) {
+          button.classList.add('recording');
+          button.innerHTML = '⏹️ Arrêter';
+          button.style.background = 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)';
+        } else {
+          button.classList.remove('recording');
+          button.innerHTML = '🎤 Dicter';
+          button.style.background = 'linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)';
+        }
+      });
+    }
+
+    // ==========================================
+    // ✨ 3. ANIMATIONS & FEEDBACK VISUELS
+    // ==========================================
+
+    // Animation de succès sur un élément
+    function animateSuccess(elementId) {
+      const element = document.getElementById(elementId);
+      if (!element) return;
+      
+      element.style.transition = 'all 0.3s ease';
+      element.style.transform = 'scale(1.05)';
+      element.style.boxShadow = '0 0 20px rgba(34, 197, 94, 0.5)';
+      
+      setTimeout(() => {
+        element.style.transform = 'scale(1)';
+        element.style.boxShadow = '';
+      }, 300);
+    }
+
+    // Shake animation pour les erreurs
+    function animateError(elementId) {
+      const element = document.getElementById(elementId);
+      if (!element) return;
+      
+      element.style.animation = 'shake 0.5s';
+      setTimeout(() => {
+        element.style.animation = '';
+      }, 500);
+    }
+
+    // Loading spinner sur un bouton
+    function setButtonLoading(buttonElement, loading = true) {
+      if (!buttonElement) return;
+      
+      if (loading) {
+        buttonElement.disabled = true;
+        buttonElement.dataset.originalText = buttonElement.innerHTML;
+        buttonElement.innerHTML = '<div class="loading" style="width: 20px; height: 20px; border-width: 2px; display: inline-block;"></div>';
+      } else {
+        buttonElement.disabled = false;
+        buttonElement.innerHTML = buttonElement.dataset.originalText || buttonElement.innerHTML;
+      }
+    }
+
+    // ==========================================
+    // 🎯 4. RACCOURCIS CLAVIER
+    // ==========================================
+
+    // Initialiser les raccourcis clavier
+    function initKeyboardShortcuts() {
+      document.addEventListener('keydown', (e) => {
+        // Ctrl/Cmd + K : Focus sur la recherche
+        if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+          e.preventDefault();
+          const searchInput = document.querySelector('input[placeholder*="Recherche"], input[placeholder*="Cerca"], input[placeholder*="Search"]');
+          if (searchInput) searchInput.focus();
+        }
+        
+        // Ctrl/Cmd + N : Nouveau véhicule/intervention
+        if ((e.ctrlKey || e.metaKey) && e.key === 'n' && isMechanicMode) {
+          e.preventDefault();
+          if (!currentVehicle) {
+            showAddForm = true;
+          } else {
+            showAddForm = true;
+          }
+          render();
+        }
+        
+        // Ctrl/Cmd + S : Sauvegarder
+        if ((e.ctrlKey || e.metaKey) && e.key === 's') {
+          e.preventDefault();
+          saveDataLocal();
+          showNotification('💾 Données sauvegardées', 'success');
+        }
+        
+        // Escape : Fermer modal/formulaire
+        if (e.key === 'Escape') {
+          showAddForm = false;
+          showShareModal = false;
+          showAppointmentForm = false;
+          render();
+        }
+        
+        // Ctrl/Cmd + T : Toggle thème
+        if ((e.ctrlKey || e.metaKey) && e.key === 't') {
+          e.preventDefault();
+          toggleTheme();
+        }
+      });
+      
+      console.log(`
+        ⌨️ RACCOURCIS CLAVIER :
+        Ctrl/Cmd + K : Rechercher
+        Ctrl/Cmd + N : Nouveau
+        Ctrl/Cmd + S : Sauvegarder
+        Ctrl/Cmd + T : Changer thème
+        Escape : Fermer
+      `);
+    }
+
+    // ==========================================
+    // 🚀 INITIALISATION
+    // ==========================================
+
+    // Appeler cette fonction au chargement de l'app
+    function initUXImprovements() {
+      // 1. Initialiser le thème
+      initTheme();
+      
+      // 2. Ajouter le bouton de thème
+      addThemeToggleButton();
+      
+      // 3. Initialiser la reconnaissance vocale
+      initSpeechRecognition();
+      
+      // 4. Initialiser les raccourcis clavier
+      initKeyboardShortcuts();
+      
+      console.log('✨ Améliorations UX initialisées');
+    }
+
+    /* ========================================== */
 
     init();
   </script>
