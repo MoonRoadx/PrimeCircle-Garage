@@ -143,36 +143,47 @@
   </div>
 
   <script type="module">
-    // Import the functions you need from the SDKs you need
-import { initializeApp } from "firebase/app";
-import { getAnalytics } from "firebase/analytics";
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
+    // Import Firebase modules
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.0/firebase-app.js";
+    import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.14.0/firebase-analytics.js";
+    import { 
+      getFirestore, 
+      enableIndexedDbPersistence 
+    } from "https://www.gstatic.com/firebasejs/10.14.0/firebase-firestore.js";
 
-// Your web app's Firebase configuration
-// For Firebase JS SDK v7.20.0 and later, measurementId is optional
-const firebaseConfig = {
-  apiKey: "AIzaSyCBv76jsKiMzJfYmdEAy3ZaDrZFDjQJssg",
-  authDomain: "prime-client-serveur.firebaseapp.com",
-  projectId: "prime-client-serveur",
-  storageBucket: "prime-client-serveur.firebasestorage.app",
-  messagingSenderId: "164158368187",
-  appId: "1:164158368187:web:1fb7105414d198680bfc9e",
-  measurementId: "G-BPF3WEJJ8V"
-};
+    // Firebase configuration
+    const firebaseConfig = {
+      apiKey: "AIzaSyCBv76jskiMzjEYmdEAy3ZaDrZFDjQJcsg",
+      authDomain: "prime-client-serveur.firebaseapp.com",
+      projectId: "prime-client-serveur",
+      storageBucket: "prime-client-serveur.firebasestorage.app",
+      messagingSenderId: "164158368187",
+      appId: "1:164158368187:web:1fb7105414d198680bfc9e",
+      measurementId: "G-BPF3MEJJ8V"
+    };
 
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
-const analytics = getAnalytics(app);
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const analytics = getAnalytics(app);
+    const db = getFirestore(app);
     
+    // Enable offline persistence
     try {
       await enableIndexedDbPersistence(db);
       console.log("✅ Mode hors ligne activé");
     } catch (err) {
-      console.log("⚠️ Erreur persistance:", err.code);
+      if (err.code === 'failed-precondition') {
+        console.warn("⚠️ Plusieurs onglets ouverts - persistance désactivée");
+      } else if (err.code === 'unimplemented') {
+        console.warn("⚠️ Navigateur non supporté pour la persistance");
+      } else {
+        console.error("❌ Erreur persistance:", err);
+      }
     }
     
+    // Expose Firebase globally
     window.firebaseDB = db;
+    window.firebaseApp = app;
     window.firebaseReady = true;
     console.log("✅ Firebase initialized");
     window.dispatchEvent(new Event('firebaseReady'));
