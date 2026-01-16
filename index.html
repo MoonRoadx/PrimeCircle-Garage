@@ -1834,7 +1834,9 @@ showNotification(`✅ ${t('paymentReport')} ${t('invoiceGenerated')}`, 'success'
                       <option value="Altro">${t('serviceOther')}</option>
                     </select>
                   </div>
-                  <div><label class="block text-sm font-semibold mb-1">📝 ${t('appointmentNotes')}</label><textarea id="appointmentNote" rows="3" placeholder="Note per l'appuntamento..." class="w-full px-3 py-2 border rounded"></textarea></div>
+                 <div><label class="block text-sm font-semibold mb-1">📝 ${t('appointmentNotes')}</label><textarea id="appointmentNote" rows="3" placeholder="Note per l'appuntamento..." class="w-full px-3 py-2 border rounded"></textarea>
+<button type="button" onclick="toggleVoiceRecording('appointmentNote')" class="voice-button mt-2 px-4 py-2 rounded text-white font-semibold" style="background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);">🎤 Dicter</button>
+</div>
                   <div class="flex gap-2 pt-2">
                     <button onclick="addAppointment()" class="flex-1 bg-purple-600 text-white py-3 rounded-lg font-semibold hover:bg-purple-700">✅ ${t('addAppointment')}</button>
                     <button onclick="showAppointmentForm=false; render();" class="flex-1 bg-gray-600 text-white py-3 rounded-lg font-semibold hover:bg-gray-700">❌ ${t('cancel')}</button>
@@ -2311,14 +2313,18 @@ showNotification(`✅ ${t('paymentReport')} ${t('invoiceGenerated')}`, 'success'
                       <option value="Altro">${t('serviceOther')}</option>
                     </select>
                   </div>
-                  <div><label class="block text-sm font-semibold mb-1">📝 ${t('description')} ${t('optional')}</label><textarea id="interventoDesc" rows="3" placeholder="${t('interventionDetails')}" class="w-full px-3 py-2 border rounded"></textarea></div>
+                  <div><label class="block text-sm font-semibold mb-1">📝 ${t('description')} ${t('optional')}</label><textarea id="interventoDesc" rows="3" placeholder="${t('interventionDetails')}" class="w-full px-3 py-2 border rounded"></textarea>
+<button type="button" onclick="toggleVoiceRecording('interventoDesc')" class="voice-button mt-2 px-4 py-2 rounded text-white font-semibold" style="background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);">🎤 Dicter</button>
+</div></div>
                   <div><label class="block text-sm font-semibold mb-1">🔩 ${t('parts')}</label><input type="text" id="interventoRicambi" placeholder="${t('partsExample')}" class="w-full px-3 py-2 border rounded"></div>
                   <div class="grid grid-cols-2 gap-3">
                     <div><label class="block text-sm font-semibold mb-1">💰 ${t('cost')} (€)</label><input type="number" id="interventoCosto" step="0.01" placeholder="0.00" class="w-full px-3 py-2 border rounded"></div>
                     <div><label class="block text-sm font-semibold mb-1">🚗 ${t('mileage')}</label><input type="number" id="interventoKm" value="${vehicle.chilometraggio || ''}" placeholder="km" class="w-full px-3 py-2 border rounded"></div>
                   </div>
                   <div><label class="block text-sm font-semibold mb-1">👤 ${t('mechanic')}</label><input type="text" id="interventoMeccanico" placeholder="${t('mechanicName')}" class="w-full px-3 py-2 border rounded"></div>
-                  <div><label class="block text-sm font-semibold mb-1">💬 ${t('notes')}</label><textarea id="interventoNote" rows="3" placeholder="${t('observations')}" class="w-full px-3 py-2 border rounded"></textarea></div>
+                  <div><label class="block text-sm font-semibold mb-1">💬 ${t('notes')}</label><textarea id="interventoNote" rows="3" placeholder="${t('observations')}" class="w-full px-3 py-2 border rounded"></textarea>
+<button type="button" onclick="toggleVoiceRecording('interventoNote')" class="voice-button mt-2 px-4 py-2 rounded text-white font-semibold" style="background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);">🎤 Dicter</button>
+</div>
                   
                   <div class="border-t border-gray-600 pt-3 mt-3">
                     <h3 class="text-sm font-semibold text-gray-300 mb-3">💰 ${t('paymentStatus')}</h3>
