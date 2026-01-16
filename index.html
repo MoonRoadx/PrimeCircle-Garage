@@ -143,20 +143,27 @@
   </div>
 
   <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.0/firebase-app.js";
-    import { getFirestore, enableIndexedDbPersistence } from "https://www.gstatic.com/firebasejs/10.14.0/firebase-firestore.js";
+    // Import the functions you need from the SDKs you need
+import { initializeApp } from "firebase/app";
+import { getAnalytics } from "firebase/analytics";
+// TODO: Add SDKs for Firebase products that you want to use
+// https://firebase.google.com/docs/web/setup#available-libraries
 
-    const firebaseConfig = {
-      apiKey: "AIzaSyCBv76jsKiMzJfYmdEAy3ZaDrZFDjQJssg",
-      authDomain: "prime-client-serveur.firebaseapp.com",
-      projectId: "prime-client-serveur",
-      storageBucket: "prime-client-serveur.firebasestorage.app",
-      messagingSenderId: "164158368187",
-      appId: "1:164158368187:web:1fb7105414d198680bfc9e"
-    };
+// Your web app's Firebase configuration
+// For Firebase JS SDK v7.20.0 and later, measurementId is optional
+const firebaseConfig = {
+  apiKey: "AIzaSyCBv76jsKiMzJfYmdEAy3ZaDrZFDjQJssg",
+  authDomain: "prime-client-serveur.firebaseapp.com",
+  projectId: "prime-client-serveur",
+  storageBucket: "prime-client-serveur.firebasestorage.app",
+  messagingSenderId: "164158368187",
+  appId: "1:164158368187:web:1fb7105414d198680bfc9e",
+  measurementId: "G-BPF3WEJJ8V"
+};
 
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const analytics = getAnalytics(app);
     
     try {
       await enableIndexedDbPersistence(db);
