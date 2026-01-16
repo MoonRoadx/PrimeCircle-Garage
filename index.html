@@ -1067,93 +1067,95 @@ const translations = {
     }
 
     async function addVehicle() {
-      if (!isMechanicMode) return showNotification(`❌ ${t('accessDenied')}`, 'error');
-      
-      const targa = document.getElementById('newVehicleTarga').value.toUpperCase().trim();
-      const marca = document.getElementById('newVehicleMarca').value;
-      let modello = document.getElementById('newVehicleModello').value;
-      const otherModello = document.getElementById('otherModelInput').value.trim();
-      
-      const clienteNome = document.getElementById('clienteNome').value.trim();
-      const clienteTelefono = document.getElementById('clienteTelefono').value.trim();
-      const clienteEmail = document.getElementById('clienteEmail').value.trim();
-      
-      // Validations avec animations ✨
-      if (!targa) {
-        showNotification(`❌ ${t('plateRequired')}`, 'error');
-        animateError('newVehicleTarga');
-        return;
-      }
-      
-      if (!validatePlate(targa)) {
-        showNotification(`❌ ${t('plateInvalid')}`, 'error');
-        animateError('newVehicleTarga');
-        return;
-      }
-      
-      if (!marca) {
-        showNotification(`❌ ${t('brand')} ${t('required')}`, 'error');
-        animateError('newVehicleMarca');
-        return;
-      }
-      
-      if (!modello) {
-        showNotification(`❌ ${t('model')} ${t('required')}`, 'error');
-        animateError('newVehicleModello');
-        return;
-      }
-      
-      if (!clienteNome) {
-        showNotification(`❌ ${t('clientName')} ${t('required')}`, 'error');
-        animateError('clienteNome');
-        return;
-      }
-      
-      if (clienteEmail && !validateEmail(clienteEmail)) {
-        showNotification(`❌ ${t('emailInvalid')}`, 'error');
-        animateError('clienteEmail');
-        return;
-      }
-      
-      if (clienteTelefono && !validatePhone(clienteTelefono)) {
-        showNotification(`❌ ${t('phoneInvalid')}`, 'error');
-        animateError('clienteTelefono');
-        return;
-      }
-      
-      if (vehicles[targa]) {
-        showNotification(`❌ ${t('vehicleExists')}`, 'error');
-        animateError('newVehicleTarga');
-        return;
-      }
-      
-      if (modello === 'other' && otherModello) {
-        modello = otherModello;
-      }
-      
-      const vehicleData = { 
-        targa, 
-        marca, 
-        modello, 
-        anno: document.getElementById('newVehicleAnno').value.trim(), 
-        chilometraggio: document.getElementById('newVehicleKm').value.trim(), 
-        cliente: {
-          nome: clienteNome,
-          telefono: clienteTelefono,
-          email: clienteEmail
-        },
-        interventi: [], 
-        appuntamenti: [],
-        clientCode: generateClientCode(targa), 
-        createdAt: new Date().toISOString(),
-        tags: []
-      };
-      
-      async function addVehicle() {
-  // ... votre code de validation ...
+  if (!isMechanicMode) return showNotification(`❌ ${t('accessDenied')}`, 'error');
+  
+  const targa = document.getElementById('newVehicleTarga').value.toUpperCase().trim();
+  const marca = document.getElementById('newVehicleMarca').value;
+  let modello = document.getElementById('newVehicleModello').value;
+  const otherModello = document.getElementById('otherModello')?.value.trim();
+  const clienteNome = document.getElementById('clienteNome').value.trim();
+  const clienteTelefono = document.getElementById('clienteTelefono').value.trim();
+  const clienteEmail = document.getElementById('clienteEmail').value.trim();
+  
+  // Validations avec animations ✨
+  if (!targa) {
+    showNotification(`❌ ${t('plateRequired')}`, 'error');
+    animateError('newVehicleTarga');
+    return;
+  }
+  
+  if (!validatePlate(targa)) {
+    showNotification(`❌ ${t('plateInvalid')}`, 'error');
+    animateError('newVehicleTarga');
+    return;
+  }
+  
+  if (!marca) {
+    showNotification(`❌ ${t('brand')} ${t('required')}`, 'error');
+    animateError('newVehicleMarca');
+    return;
+  }
+  
+  if (!modello) {
+    showNotification(`❌ ${t('model')} ${t('required')}`, 'error');
+    animateError('newVehicleModello');
+    return;
+  }
+  
+  if (!clienteNome) {
+    showNotification(`❌ ${t('clientName')} ${t('required')}`, 'error');
+    animateError('clienteNome');
+    return;
+  }
+  
+  if (clienteEmail && !validateEmail(clienteEmail)) {
+    showNotification(`❌ ${t('emailInvalid')}`, 'error');
+    animateError('clienteEmail');
+    return;
+  }
+  
+  if (clienteTelefono && !validatePhone(clienteTelefono)) {
+    showNotification(`❌ ${t('phoneInvalid')}`, 'error');
+    animateError('clienteTelefono');
+    return;
+  }
+  
+  if (vehicles[targa]) {
+    showNotification(`❌ ${t('vehicleExists')}`, 'error');
+    animateError('newVehicleTarga');
+    return;
+  }
+  
+  if (modello === 'other' && otherModello) {
+    modello = otherModello;
+  }
+  
+  const vehicleData = { 
+    targa, 
+    marca, 
+    modello, 
+    anno: document.getElementById('newVehicleAnno').value.trim(), 
+    chilometraggio: document.getElementById('newVehicleKm').value.trim(), 
+    cliente: {
+      nome: clienteNome,
+      telefono: clienteTelefono,
+      email: clienteEmail
+    },
+    interventi: [], 
+    appuntamenti: [],
+    clientCode: generateClientCode(targa), 
+    createdAt: new Date().toISOString(),
+    tags: []
+  };
   
   vehicles[targa] = vehicleData;
   saveDataLocal();
+  
+  // Vider les champs
+  ['newVehicleTarga', 'newVehicleAnno', 'newVehicleKm', 'clienteNome', 'clienteTelefono', 'clienteEmail'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.value = '';
+  });
   
   showNotification(`✅ ${t('vehicleAdded')}`);
   
@@ -1161,6 +1163,7 @@ const translations = {
   animateSuccess('newVehicleTarga');
   
   if (USE_FIREBASE) syncToFirestore(targa, vehicleData).catch(err => {});
+  
   setTimeout(() => render(), 100);
 }
     }
