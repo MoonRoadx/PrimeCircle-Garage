@@ -1078,14 +1078,54 @@ const translations = {
       const clienteTelefono = document.getElementById('clienteTelefono').value.trim();
       const clienteEmail = document.getElementById('clienteEmail').value.trim();
       
-      if (!targa) return showNotification(`❌ ${t('plateRequired')}`, 'error');
-      if (!validatePlate(targa)) return showNotification(`❌ ${t('plateInvalid')}`, 'error');
-      if (!marca) return showNotification(`❌ ${t('brand')} ${t('required')}`, 'error');
-      if (!modello) return showNotification(`❌ ${t('model')} ${t('required')}`, 'error');
-      if (!clienteNome) return showNotification(`❌ ${t('clientName')} ${t('required')}`, 'error');
-      if (clienteEmail && !validateEmail(clienteEmail)) return showNotification(`❌ ${t('emailInvalid')}`, 'error');
-      if (clienteTelefono && !validatePhone(clienteTelefono)) return showNotification(`❌ ${t('phoneInvalid')}`, 'error');
-      if (vehicles[targa]) return showNotification(`❌ ${t('vehicleExists')}`, 'error');
+      // Validations avec animations ✨
+      if (!targa) {
+        showNotification(`❌ ${t('plateRequired')}`, 'error');
+        animateError('newVehicleTarga');
+        return;
+      }
+      
+      if (!validatePlate(targa)) {
+        showNotification(`❌ ${t('plateInvalid')}`, 'error');
+        animateError('newVehicleTarga');
+        return;
+      }
+      
+      if (!marca) {
+        showNotification(`❌ ${t('brand')} ${t('required')}`, 'error');
+        animateError('newVehicleMarca');
+        return;
+      }
+      
+      if (!modello) {
+        showNotification(`❌ ${t('model')} ${t('required')}`, 'error');
+        animateError('newVehicleModello');
+        return;
+      }
+      
+      if (!clienteNome) {
+        showNotification(`❌ ${t('clientName')} ${t('required')}`, 'error');
+        animateError('clienteNome');
+        return;
+      }
+      
+      if (clienteEmail && !validateEmail(clienteEmail)) {
+        showNotification(`❌ ${t('emailInvalid')}`, 'error');
+        animateError('clienteEmail');
+        return;
+      }
+      
+      if (clienteTelefono && !validatePhone(clienteTelefono)) {
+        showNotification(`❌ ${t('phoneInvalid')}`, 'error');
+        animateError('clienteTelefono');
+        return;
+      }
+      
+      if (vehicles[targa]) {
+        showNotification(`❌ ${t('vehicleExists')}`, 'error');
+        animateError('newVehicleTarga');
+        return;
+      }
       
       if (modello === 'other' && otherModello) {
         modello = otherModello;
@@ -1109,16 +1149,20 @@ const translations = {
         tags: []
       };
       
-      vehicles[targa] = vehicleData;
-      saveDataLocal();
-      
-      ['newVehicleTarga', 'newVehicleAnno', 'newVehicleKm', 'clienteNome', 'clienteTelefono', 'clienteEmail'].forEach(id => {
-        document.getElementById(id) && (document.getElementById(id).value = '');
-      });
-      
-      showNotification(`✅ ${t('vehicleAdded')}`);
-      if (USE_FIREBASE) syncToFirestore(targa, vehicleData).catch(err => {});
-      setTimeout(() => render(), 100);
+      async function addVehicle() {
+  // ... votre code de validation ...
+  
+  vehicles[targa] = vehicleData;
+  saveDataLocal();
+  
+  showNotification(`✅ ${t('vehicleAdded')}`);
+  
+  // ✨ ANIMATION DE SUCCÈS
+  animateSuccess('newVehicleTarga');
+  
+  if (USE_FIREBASE) syncToFirestore(targa, vehicleData).catch(err => {});
+  setTimeout(() => render(), 100);
+}
     }
 
     async function addIntervento() {
