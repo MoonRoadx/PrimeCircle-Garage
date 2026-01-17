@@ -1241,7 +1241,143 @@ const translations = {
   updateStorageIndicator();
   render();
 }
+/* ==========================================
+   📅 RAPPELS AUTOMATIQUES
+   ========================================== */
 
+// Ajouter un rappel à un véhicule
+function addReminder() {
+  if (!isMechanicMode) return showNotification(`❌ ${t('accessDenied')}`, 'error');
+  
+  const type = document.getElementById('reminderType').value;
+  const intervalKm = document.getElementById('reminderIntervalKm')?.value || '';
+  const intervalDays = document.getElementById('reminderIntervalDays')?.value || '';
+  const description = document.getElementById('reminderDesc')?.value.trim() || '';
+  
+  if (!type) {
+    return showNotification(`❌ ${t('type')} ${t('required')}`, 'error');
+  }
+  
+  if (!intervalKm && !intervalDays) {
+    return showNotification(`❌ ${t('reminderInterval')} ${t('required')}`, 'error');
+  }
+  
+  const reminder = {
+    id: Date.now(),
+    type: type,
+    intervalKm: intervalKm ? parseInt(intervalKm) : null,
+    intervalDays: intervalDays ? parseInt(intervalDays) : null,
+    description: description,
+    createdAt: new Date().toISOString(),
+    active: true
+  };
+  
+  if (!vehicles[currentVehicle].reminders) {
+    vehicles[currentVehicle].reminders = [];
+  }
+  
+  vehicles[currentVehicle].reminders.push(reminder);
+  saveDataLocal();
+  
+  if (USE_FIREBASE) {
+    syncToFirestore(currentVehicle, vehicles[currentVehicle]).catch(err => {});
+  }
+  
+  showNotification(`✅ ${t('reminderAdded')}`);
+  showReminderForm = false;
+  render();
+}
+
+// Supprimer un rappel
+function deleteReminder(reminderId) {
+  if (!isMechanicMode) return;
+  
+  if (!confirm(`${t('delete')} ${t('reminderTitle')}?`)) return;
+  
+  vehicles[currentVehicle].reminders = vehicles[currentVehicle].reminders.filter(r => r.id !== reminderId);
+  saveDataLocal();
+  
+  if (USE_FIREBASE) {
+    syncToFirestore(currentVehicle, vehicles[currentVehicle]).catch(err => {});
+  }
+  
+  showNotification(`✅ ${t('reminderDeleted')}`);
+  render();
+}
+
+// Calculer l'état d'un rappel
+function calculateReminderStatus(reminder, currentKm) {
+  const vehicle = vehicles[currentVehicle];
+  const status = {
+    type: '',
+    value: 0,
+    overdue: false,
+    urgent: false
+  };
+  
+  // Rappel basé sur le kilométrage
+  if (reminder.intervalKm && currentKm) {
+    const targetKm = parseInt(currentKm) + reminder.intervalKm;
+    const kmRemaining = targetKm - parseInt(vehicle.chilometraggio || currentKm);
+    
+    status.type = 'km';
+    status.value = Math.abs(kmRemaining);
+    status.overdue = kmRemaining < 0;
+    status.urgent = kmRemaining > 0 && kmRemaining <= 500;
+  }
+  
+  // Rappel basé sur la date
+  if (reminder.intervalDays) {
+    const createdDate = new Date(reminder.createdAt);
+    const targetDate = new Date(createdDate.getTime() + (reminder.intervalDays * 24 * 60 * 60 * 1000));
+    const today = new Date();
+    const daysRemaining = Math.ceil((targetDate - today) / (1000 * 60 * 60 * 24));
+    
+    status.type = 'days';
+    status.value = Math.abs(daysRemaining);
+    status.overdue = daysRemaining < 0;
+    status.urgent = daysRemaining > 0 && daysRemaining <= 7;
+  }
+  
+  return status;
+}
+
+// Obtenir tous les rappels actifs
+function getActiveReminders() {
+  const active = [];
+  
+  Object.keys(vehicles).forEach(targa => {
+    const vehicle = vehicles[targa];
+    if (!vehicle.reminders) return;
+    
+    vehicle.reminders.forEach(reminder => {
+      if (!reminder.active) return;
+      
+      const currentKm = vehicle.chilometraggio || 0;
+      const status = calculateReminderStatus(reminder, currentKm);
+      
+      if (status.overdue || status.urgent) {
+        active.push({
+          targa: targa,
+          vehicle: vehicle,
+          reminder: reminder,
+          status: status
+        });
+      }
+    });
+  });
+  
+  return active.sort((a, b) => {
+    if (a.status.overdue && !b.status.overdue) return -1;
+    if (!a.status.overdue && b.status.overdue) return 1;
+    return a.status.value - b.status.value;
+  });
+}
+
+// Variable globale pour le formulaire de rappel
+let showReminderForm = false;
+
+  
     async function deleteIntervento(id) {
       if (!isMechanicMode) return showNotification(`❌ ${t('accessDenied')}`, 'error');
       if (!confirm(t('deleteConfirm'))) return;
@@ -2114,15 +2250,17 @@ showNotification(`✅ ${t('paymentReport')} ${t('invoiceGenerated')}`, 'success'
                 ` : `<p class="text-gray-400 text-center py-4">${t('noAppointments')}</p>`}
               </div>
 
-              ${isMechanicMode ? `
-                <div class="grid grid-cols-3 md:grid-cols-6 gap-2 mb-4">
-                  <button onclick="showAddForm=true; render();" class="bg-green-600 text-white py-3 rounded-lg font-semibold hover:bg-green-700">➕ ${t('newButton')}</button>
-                  <button onclick="exportToExcel()" class="bg-green-700 text-white py-3 rounded-lg font-semibold hover:bg-green-800">📊 ${t('exportCSV')}</button>
-                  <button onclick="openShareModal('${currentVehicle}')" class="bg-blue-600 text-white py-3 rounded-lg font-semibold hover:bg-blue-700">🔗 ${t('link')}</button>
-                  <button onclick="generateInvoice()" class="pdf-button text-white py-3 rounded-lg font-semibold">📄 ${t('generateGlobalInvoice')}</button>
-                  <button onclick="generateCarnetEntretien('${currentVehicle}')" class="bg-indigo-600 text-white py-3 rounded-lg font-semibold hover:bg-indigo-700">📘 Carnet</button>
-                  <button onclick="showAdvancedSearch=!showAdvancedSearch; render();" class="bg-purple-600 text-white py-3 rounded-lg font-semibold hover:bg-purple-700">🔍 ${t('searchAdvanced')}</button>
-                </div>
+            ${isMechanicMode ? `
+  <div class="grid grid-cols-3 md:grid-cols-6 gap-2 mb-4">
+    <button onclick="showAddForm=true; render();" class="bg-green-600 text-white py-3 rounded-lg font-semibold hover:bg-green-700">➕ ${t('newButton')}</button>
+    <button onclick="exportToExcel()" class="bg-green-700 text-white py-3 rounded-lg font-semibold hover:bg-green-800">📊 ${t('exportCSV')}</button>
+    <button onclick="openShareModal('${currentVehicle}')" class="bg-blue-600 text-white py-3 rounded-lg font-semibold hover:bg-blue-700">🔗 ${t('link')}</button>
+    <button onclick="generateInvoice()" class="pdf-button text-white py-3 rounded-lg font-semibold">📄 ${t('generateGlobalInvoice')}</button>
+    <button onclick="generateCarnetEntretien('${currentVehicle}')" class="bg-indigo-600 text-white py-3 rounded-lg font-semibold hover:bg-indigo-700">📘 Carnet</button>
+    <button onclick="showReminderForm=true; render();" class="bg-orange-600 text-white py-3 rounded-lg font-semibold hover:bg-orange-700">📅 ${t('reminderTitle')}</button>
+    <button onclick="showAdvancedSearch=!showAdvancedSearch; render();" class="bg-purple-600 text-white py-3 rounded-lg font-semibold hover:bg-purple-700">🔍 ${t('searchAdvanced')}</button>
+  </div>
+` : ''}
                 
                 ${showAdvancedSearch ? `
                   <div class="bg-white rounded-lg shadow p-4 mb-4">
