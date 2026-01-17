@@ -452,7 +452,24 @@ const translations = {
         compressionActive: "Compressione automatica attiva",
         savingPercent: "risparmio",
         storage: "Archiviazione",
-        automaticCompression: "Compressione automatica immagini"
+        automaticCompression: "Compressione automatica immagini",
+        reminderTitle: "Promemoria Manutenzione",
+        addReminder: "Aggiungi Promemoria",
+        reminderType: "Tipo Promemoria",
+        reminderKm: "Chilometraggio",
+        reminderDate: "Data",
+        reminderInterval: "Intervallo",
+        nextService: "Prossimo Servizio",
+        dueIn: "Scadenza tra",
+        overdue: "Scaduto",
+        activeReminders: "Promemoria Attivi",
+        noReminders: "Nessun promemoria attivo",
+        reminderAdded: "Promemoria aggiunto",
+        reminderDeleted: "Promemoria eliminato",
+        kmRemaining: "km rimanenti",
+        daysRemaining: "giorni rimanenti",
+        kmOverdue: "km oltre",
+        daysOverdue: "giorni oltre"
       },
       fr: {
         appName: "Prime Circle", appSubtitle: "Car Service", loginTitle: "Entrez le code:",
@@ -582,7 +599,24 @@ const translations = {
        "Impianto elettrico": "Système électrique",
         Carrozzeria: "Carrosserie",
         Riparazione: "Reparation",
-        Altro: "Autre"
+        Altro: "Autre",
+        reminderTitle: "Rappels Maintenance",
+        addReminder: "Ajouter Rappel",
+        reminderType: "Type de Rappel",
+        reminderKm: "Kilométrage",
+        reminderDate: "Date",
+        reminderInterval: "Intervalle",
+        nextService: "Prochain Entretien",
+        dueIn: "Échéance dans",
+        overdue: "En retard",
+        activeReminders: "Rappels Actifs",
+        noReminders: "Aucun rappel actif",
+        reminderAdded: "Rappel ajouté",
+        reminderDeleted: "Rappel supprimé",
+        kmRemaining: "km restants",
+        daysRemaining: "jours restants",
+        kmOverdue: "km dépassés",
+        daysOverdue: "jours dépassés"
       },
       en: {
         appName: "Prime Circle", appSubtitle: "Car Service", loginTitle: "Enter the code:",
@@ -713,7 +747,24 @@ const translations = {
         "Impianto elettrico": "Electrical System",
         Carrozzeria: "Bodywork",
         Altro: "Other",
-        Riparazione: "Repair"
+        Riparazione: "Repair",
+        reminderTitle: "Maintenance Reminders",
+        addReminder: "Add Reminder",
+        reminderType: "Reminder Type",
+        reminderKm: "Mileage",
+        reminderDate: "Date",
+        reminderInterval: "Interval",
+        nextService: "Next Service",
+        dueIn: "Due in",
+        overdue: "Overdue",
+        activeReminders: "Active Reminders",
+        noReminders: "No active reminders",
+        reminderAdded: "Reminder added",
+        reminderDeleted: "Reminder deleted",
+        kmRemaining: "km remaining",
+        daysRemaining: "days remaining",
+        kmOverdue: "km overdue",
+        daysOverdue: "days overdue"
       },
       pwa: {
         installPrompt: "Install the app on your phone",
@@ -1127,70 +1178,69 @@ const translations = {
     }
 
     async function addIntervento() {
-      if (!isMechanicMode) return showNotification(`❌ ${t('accessDenied')}`, 'error');
-      
-      const data = document.getElementById('interventoData').value;
-      const tipo = document.getElementById('interventoTipo').value;
-      const tipo2 = document.getElementById('interventoTipo2')?.value || '';
-      const tipo3 = document.getElementById('interventoTipo3')?.value || '';
-      const tipo4 = document.getElementById('interventoTipo4')?.value || '';
-      const tipo5 = document.getElementById('interventoTipo5')?.value || '';
-      const descrizione = document.getElementById('interventoDesc').value.trim();
-      const ricambi = document.getElementById('interventoRicambi').value.trim();
-      const costo = document.getElementById('interventoCosto').value;
-      const km = document.getElementById('interventoKm').value;
-      const meccanico = document.getElementById('interventoMeccanico').value.trim();
-      const note = document.getElementById('interventoNote').value.trim();
-
-      const photos = [];
-      const previewImages = document.querySelectorAll('#photoPreview img');
-      previewImages.forEach(img => photos.push(img.src));
-      
-      if (!tipo) {
-        return showNotification(`❌ ${t('type')} ${t('required')}`, 'error');
-      }
-      
-      const paymentStatus = document.getElementById('interventoPaymentStatus')?.value || 'unpaid';
-      const paymentDate = document.getElementById('interventoPaymentDate')?.value || '';
-      
-      const intervento = { 
-        id: Date.now(), 
-        data, 
-        tipo, 
-        tipo2,
-        tipo3,
-        tipo4,
-        tipo5,
-        descrizione, 
-        ricambi, 
-        costo, 
-        chilometraggio: km, 
-        meccanico, 
-        note, 
-        photos,
-        paymentStatus: paymentStatus,
-        paymentDate: paymentDate,
-        timestamp: new Date().toISOString() 
-      };
-      
-      vehicles[currentVehicle].interventi.unshift(intervento);
-      if (km) vehicles[currentVehicle].chilometraggio = km;
-      saveDataLocal();
-      
-      showSyncIndicator(`🔄 ${t('syncingData')}`);
-      
-      try {
-        await syncToFirestore(currentVehicle, vehicles[currentVehicle]);
-        showNotification(`✅ ${t('dataSaved')} - ${t('clientNotified')}`);
-      } catch (error) {
-        console.error("Erreur sync:", error);
-        showNotification(`⚠️ Sauvegardé localement, sync en attente`, 'error');
-      }
-      
-      showAddForm = false;
-      updateStorageIndicator();
-      render();
-    }
+  if (!isMechanicMode) return showNotification(`❌ ${t('accessDenied')}`, 'error');
+  
+  const data = document.getElementById('interventoData').value;
+  const tipo = document.getElementById('interventoTipo').value;
+  const tipo2 = document.getElementById('interventoTipo2')?.value || '';
+  const tipo3 = document.getElementById('interventoTipo3')?.value || '';
+  const tipo4 = document.getElementById('interventoTipo4')?.value || '';
+  const tipo5 = document.getElementById('interventoTipo5')?.value || '';
+  const descrizione = document.getElementById('interventoDesc').value.trim();
+  const ricambi = document.getElementById('interventoRicambi').value.trim();
+  const costo = document.getElementById('interventoCosto').value;
+  const km = document.getElementById('interventoKm').value;
+  const meccanico = document.getElementById('interventoMeccanico').value.trim();
+  const note = document.getElementById('interventoNote').value.trim();
+  const photos = [];
+  const previewImages = document.querySelectorAll('#photoPreview img');
+  previewImages.forEach(img => photos.push(img.src));
+  
+  if (!tipo) {
+    return showNotification(`❌ ${t('type')} ${t('required')}`, 'error');
+  }
+  
+  const paymentStatus = document.getElementById('interventoPaymentStatus')?.value || 'unpaid';
+  const paymentDate = document.getElementById('interventoPaymentDate')?.value || '';
+  
+  const intervento = { 
+    id: Date.now(), 
+    data, 
+    tipo, 
+    tipo2,
+    tipo3,
+    tipo4,
+    tipo5,
+    descrizione, 
+    ricambi, 
+    costo, 
+    chilometraggio: km, 
+    meccanico, 
+    note, 
+    photos,
+    paymentStatus: paymentStatus,
+    paymentDate: paymentDate,
+    timestamp: new Date().toISOString() 
+  };
+  
+  vehicles[currentVehicle].interventi.unshift(intervento);
+  if (km) vehicles[currentVehicle].chilometraggio = km;
+  saveDataLocal();
+  
+  showSyncIndicator(`🔄 ${t('syncingData')}`);
+  
+  try {
+    await syncToFirestore(currentVehicle, vehicles[currentVehicle]);
+    showNotification(`✅ ${t('dataSaved')} - ${t('clientNotified')}`);
+  } catch (error) {
+    console.error("Erreur sync:", error);
+    showNotification(`⚠️ Sauvegardé localement, sync en attente`, 'error');
+  }
+  
+  showAddForm = false;
+  updateStorageIndicator();
+  render();
+}
 
     async function deleteIntervento(id) {
       if (!isMechanicMode) return showNotification(`❌ ${t('accessDenied')}`, 'error');
