@@ -2599,6 +2599,7 @@ showNotification(`✅ ${t('paymentReport')} ${t('invoiceGenerated')}`, 'success'
               vehicles[targa] = vehicleData;
               saveDataLocal();
               showNotification(`✅ ${t('autoAccess')} - ${t('realtimeActive')}`);
+
             }
           }
         }
@@ -2606,11 +2607,10 @@ showNotification(`✅ ${t('paymentReport')} ${t('invoiceGenerated')}`, 'success'
       
       render();
 
-      // ========== INITIALISER LES AMÉLIORATIONS UX ==========
-      initUXImprovements();
-      // =======================================================
-      
-      window.addEventListener('online', () => {
+      // Initialiser le mode thème
+initModeTheme();
+
+window.addEventListener('online', () => {
         isOffline = false;
         showOfflineIndicator();
         if (isClientMode && currentVehicle && USE_FIREBASE) {
@@ -2631,7 +2631,76 @@ showNotification(`✅ ${t('paymentReport')} ${t('invoiceGenerated')}`, 'success'
         }
       }
     }
+/* ==========================================
+   🎨 MODE SOMBRE/CLAIR - JAVASCRIPT
+   ========================================== */
 
+// Initialiser le thème au chargement
+function initTheme() {
+  const savedTheme = localStorage.getItem('theme') || 'dark';
+  if (savedTheme === 'light') {
+    document.body.classList.add('light-mode');
+  }
+  updateThemeIcon();
+}
+
+// Toggle entre dark et light
+function toggleTheme() {
+  document.body.classList.add('transitioning');
+  document.body.classList.toggle('light-mode');
+  
+  const isLight = document.body.classList.contains('light-mode');
+  localStorage.setItem('theme', isLight ? 'light' : 'dark');
+  
+  updateThemeIcon();
+  showNotification(isLight ? '☀️ Mode clair activé' : '🌙 Mode sombre activé');
+  
+  setTimeout(() => {
+    document.body.classList.remove('transitioning');
+  }, 300);
+}
+
+// Mettre à jour l'icône du bouton
+function updateThemeIcon() {
+  const themeButton = document.getElementById('themeToggle');
+  if (!themeButton) return;
+  
+  const isLight = document.body.classList.contains('light-mode');
+  themeButton.innerHTML = `<span class="theme-icon">${isLight ? '🌙' : '☀️'}</span>`;
+}
+
+// Ajouter le bouton de thème au HTML
+function addThemeToggleButton() {
+  const existingButton = document.getElementById('themeToggle');
+  if (existingButton) return;
+  
+  const button = document.createElement('div');
+  button.id = 'themeToggle';
+  button.className = 'theme-toggle';
+  button.onclick = toggleTheme;
+  button.innerHTML = '<span class="theme-icon">☀️</span>';
+  button.title = 'Changer de thème';
+  
+  document.body.appendChild(button);
+  updateThemeIcon();
+}
+
+// Raccourci clavier Ctrl+T
+document.addEventListener('keydown', (e) => {
+  if ((e.ctrlKey || e.metaKey) && e.key === 't') {
+    e.preventDefault();
+    toggleTheme();
+  }
+});
+
+// Fonction d'initialisation
+function initModeTheme() {
+  initTheme();
+  addThemeToggleButton();
+  console.log('✨ Mode sombre/clair activé');
+}
+
+init();
     init();
   </script>
 </body>
