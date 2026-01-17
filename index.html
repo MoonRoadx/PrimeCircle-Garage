@@ -2107,11 +2107,11 @@ showNotification(`✅ ${t('paymentReport')} ${t('invoiceGenerated')}`, 'success'
                       <div class="flex justify-between items-start mb-2">
                         <div class="flex-1">
                           <div class="text-sm text-gray-400 mb-1">📅 ${inter.data || t('date')}</div>
-                          <h3 class="font-bold text-lg text-blue-400">${inter.tipo}</h3>
-                          ${inter.tipo2 ? `<div class="text-sm text-blue-300 mt-1">🔧 ${inter.tipo2}</div>` : ''}
-                          ${inter.tipo3 ? `<div class="text-sm text-blue-300 mt-1">🔧 ${inter.tipo3}</div>` : ''}
-                          ${inter.tipo4 ? `<div class="text-sm text-blue-300 mt-1">🔧 ${inter.tipo4}</div>` : ''}
-                          ${inter.tipo5 ? `<div class="text-sm text-blue-300 mt-1">🔧 ${inter.tipo5}</div>` : ''}
+                          <h3 class="font-bold text-lg text-blue-400">${t(inter.tipo)}</h3>
+                           ${inter.tipo2 ? `<div class="text-sm text-blue-300 mt-1">🔧 ${t(inter.tipo2)}</div>` : ''}
+                           ${inter.tipo3 ? `<div class="text-sm text-blue-300 mt-1">🔧 ${t(inter.tipo3)}</div>` : ''}
+                           ${inter.tipo4 ? `<div class="text-sm text-blue-300 mt-1">🔧 ${t(inter.tipo4)}</div>` : ''}
+                           ${inter.tipo5 ? `<div class="text-sm text-blue-300 mt-1">🔧 ${t(inter.tipo5)}</div>` : ''}
                         </div>
                         ${isMechanicMode ? `<div class="flex flex-wrap gap-2">
                           ${inter.paymentStatus !== 'paid' ? `
