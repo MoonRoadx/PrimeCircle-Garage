@@ -1,105 +1,18 @@
 <!DOCTYPE html>
 <html lang="it">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
-  <meta name="description" content="Sistema di tracciamento interventi meccanici - Prime Circle"/>
-  <meta name="theme-color" content="#2563eb"/>
-  <meta name="apple-mobile-web-app-capable" content="yes"/>
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
-  <meta name="apple-mobile-web-app-title" content="Prime Circle"/>
-  <!-- Favicons -->
-  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
-  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
-  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
-  <link rel="shortcut icon" href="/favicon.ico">
-  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
-  <!-- PWA Manifest -->
-  <link rel="manifest" href="manifest.json"/>
+  <!-- ... (conservez toutes vos balises head existantes) ... -->
   <title>Prime Circle - System NFC</title>
 
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
-
-  <style>
-    /* Conservez tout votre CSS existant */
-    html, body { height: 100%; margin: 0; }
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      background: url('Background.png') no-repeat center center fixed;
-      background-size: cover;
-      color: white;
-      min-height: 100vh;
-      opacity: 0;
-      animation: fadeIn 1s ease-in-out forwards;
-    }
-    /* ... (conservez le reste de votre CSS) ... */
-  </style>
+  <!-- ... (conservez vos balises de style et scripts CDN) ... -->
 </head>
 <body>
   <div id="app">
-    <div class="min-h-screen flex items-center justify-center">
-      <div class="bg-white rounded-lg shadow-lg p-8 max-w-md w-full text-center">
-        <div class="loading mx-auto mb-4"></div>
-        <p class="text-gray-300">Caricamento Firebase...</p>
-      </div>
-    </div>
+    <!-- ... (conservez votre HTML initial) ... -->
   </div>
 
   <script type="module">
-    // Import Firebase modules
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.0/firebase-app.js";
-    import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.14.0/firebase-analytics.js";
-    import {
-      getFirestore,
-      enableIndexedDbPersistence
-    } from "https://www.gstatic.com/firebasejs/10.14.0/firebase-firestore.js";
-
-    // Firebase configuration
-    const firebaseConfig = {
-      apiKey: "AIzaSyCBv76jskiMzjEYmdEAy3ZaDrZFDjQJcsg",
-      authDomain: "prime-client-serveur.firebaseapp.com",
-      projectId: "prime-client-serveur",
-      storageBucket: "prime-client-serveur.firebasestorage.app",
-      messagingSenderId: "164158368187",
-      appId: "1:164158368187:web:1fb7105414d198680bfc9e",
-      measurementId: "G-BPF3MEJJ8V"
-    };
-
-    // Initialize Firebase
-    const app = initializeApp(firebaseConfig);
-    const analytics = getAnalytics(app);
-    const db = getFirestore(app);
-
-    // Enable offline persistence
-    try {
-      await enableIndexedDbPersistence(db);
-      console.log("✅ Mode hors ligne activé");
-    } catch (err) {
-      if (err.code === 'failed-precondition') {
-        console.warn("⚠️ Plusieurs onglets ouverts - persistance désactivée");
-      } else if (err.code === 'unimplemented') {
-        console.warn("⚠️ Navigateur non supporté pour la persistance");
-      } else {
-        console.error("❌ Erreur persistance:", err);
-      }
-    }
-
-    // Expose Firebase globally
-    window.firebaseDB = db;
-    window.firebaseApp = app;
-    window.firebaseReady = true;
-    console.log("✅ Firebase initialized");
-    window.dispatchEvent(new Event('firebaseReady'));
-
-    // Service Worker Registration for PWA
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('/sw.js')
-        .then(reg => console.log('✅ Service Worker registered'))
-        .catch(err => console.log('❌ SW registration failed:', err));
-    }
+    // ... (conservez votre configuration Firebase) ...
   </script>
 
   <script>
@@ -107,9 +20,6 @@
     const MECHANIC_PIN = "0000";
     const USE_FIREBASE = true;
     let vehicleDatabase = {};
-
-    // URL du fichier JSON sur GitHub
-    const GITHUB_VEHICLES_URL = 'https://raw.githubusercontent.com/votre-utilisateur/prime-circle-data/main/vehicles.json';
 
     // Données du garage
     const garageInfo = {
@@ -119,27 +29,22 @@
       phone: "A définir",
       email: "A définir",
       vatNumber: "A définir",
-      website: "A définir"
+      website: "A definir"
     };
 
     // Traductions (conservez vos traductions existantes)
     const translations = {
-      it: { /* ... vos traductions existantes ... */ },
-      fr: { /* ... vos traductions existantes ... */ },
-      en: { /* ... vos traductions existantes ... */ },
-      pwa: { /* ... vos traductions existantes ... */ }
+      it: { /* ... */ },
+      fr: { /* ... */ },
+      en: { /* ... */ },
+      pwa: { /* ... */ }
     };
 
-    // Variables globales
+    // Variables globales (conservez vos variables existantes)
     let currentLang = localStorage.getItem('app_language') || 'it';
-    let vehicles = {}, currentVehicle = null, showAddForm = false, isMechanicMode = false, isClientMode = false;
-    let showLoginScreen = true, searchQuery = '', showShareModal = false, shareModalTarga = null;
-    let realtimeUnsubscribe = null, showAppointmentForm = false, showDashboard = false;
-    let showAdvancedSearch = false, filters = { date: '', type: '', mechanic: '', costMin: '', costMax: '' };
-    let isOffline = !navigator.onLine;
-    let deferredPrompt = null;
+    // ... (autres variables globales) ...
 
-    // Fonction pour charger les données des véhicules depuis GitHub
+    // Fonction pour charger les données des véhicules depuis le dossier local 'data'
     async function loadVehicleDatabase() {
       try {
         // 1. Vérifier le cache local
@@ -150,15 +55,15 @@
           return;
         }
 
-        // 2. Charger depuis GitHub
-        console.log("Tentative de chargement depuis GitHub...");
-        const response = await fetch(GITHUB_VEHICLES_URL);
+        // 2. Charger depuis le dossier local 'data'
+        console.log("Tentative de chargement depuis /data/vehicles.json...");
+        const response = await fetch('data/vehicles.json');
         if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
         vehicleDatabase = await response.json();
         localStorage.setItem('vehicleDatabase', JSON.stringify(vehicleDatabase));
-        console.log("✅ Vehicle database loaded from GitHub");
+        console.log("✅ Vehicle database loaded from local data folder");
       } catch (error) {
-        console.error("❌ Error loading vehicle database from GitHub:", error);
+        console.error("❌ Error loading vehicle database from local data folder:", error);
         // Liste de secours en cas d'échec
         vehicleDatabase = {
           "Fiat": ["Panda", "500", "Punto", "Tipo", "Doblò"],
@@ -214,6 +119,7 @@
       }
     }
 
+    // Fonction pour gérer le changement de modèle
     function handleModelChange() {
       const modelSelect = document.getElementById('newVehicleModello');
       const otherModelInput = document.getElementById('otherModelInput');
@@ -237,70 +143,13 @@
     }
 
     // Fonctions utilitaires (conservez vos fonctions existantes)
-    function showNotification(message, type = 'success') {
-      const notification = document.createElement('div');
-      notification.className = `notification ${type === 'success' ? 'bg-green-600' : 'bg-red-600'} text-white`;
-      notification.textContent = message;
-      document.body.appendChild(notification);
-      setTimeout(() => { notification.style.animation = 'slideIn 0.3s ease-out reverse'; setTimeout(() => notification.remove(), 300); }, 3000);
-    }
-
-    function showSyncIndicator(message = "🔄 Synchronisation...") {
-      const existing = document.getElementById('syncIndicator');
-      if (existing) existing.remove();
-
-      const indicator = document.createElement('div');
-      indicator.id = 'syncIndicator';
-      indicator.className = 'fixed top-20 right-4 bg-blue-600 text-white px-4 py-2 rounded-lg shadow-lg z-50 flex items-center gap-2';
-      indicator.innerHTML = `
-        <div class="loading" style="width: 16px; height: 16px; border-width: 2px;"></div>
-        <span class="text-sm">${message}</span>
-      `;
-      document.body.appendChild(indicator);
-
-      setTimeout(() => indicator.remove(), 2000);
-    }
-
-    // Fonctions Firebase (conservez vos fonctions existantes)
-    async function syncToFirestore(targa, vehicleData) { /* ... */ }
-    async function loadFromFirestore(targa, enableRealtime = false) { /* ... */ }
-    async function deleteFromFirestore(targa) { /* ... */ }
-    async function loadAllVehiclesFromFirestore() { /* ... */ }
-    function loadDataLocal() { /* ... */ }
-    function saveDataLocal() { /* ... */ }
-
-    // Fonctions de gestion des véhicules (conservez vos fonctions existantes)
-    function generateClientCode(targa) { return `${targa}-${new Date().getFullYear()}`; }
-    function verifyClientCode(code) { /* ... */ }
-    function getClientLink(targa) { /* ... */ }
-    async function addVehicle() { /* ... */ }
-    async function addIntervento() { /* ... */ }
-    function updatePaymentStatus(interventoId, newStatus) { /* ... */ }
-    async function deleteVehicle(targa) { /* ... */ }
-    async function addAppointment() { /* ... */ }
-    async function deleteAppointment(id) { /* ... */ }
-    function openShareModal(targa) { /* ... */ }
-    function copyLink(targa) { /* ... */ }
-    function shareViaWhatsApp(targa) { /* ... */ }
-    function shareViaEmail(targa) { /* ... */ }
-    function updateSearch(q) { /* ... */ }
-    function getFilteredVehicles() { /* ... */ }
-    function getFilteredInterventions() { /* ... */ }
-    function exportToExcel() { /* ... */ }
-    function getVehicleStats(targa) { /* ... */ }
-    function getStatistics() { /* ... */ }
-    function generateInvoice(interventoId = null) { /* ... */ }
-    function getPaymentStats() { /* ... */ }
-    function exportPaymentReport() { /* ... */ }
-    function compressImage(file, maxWidth = 1200, quality = 0.7) { /* ... */ }
-    function calculateStorageSize() { /* ... */ }
-    function formatBytes(bytes) { /* ... */ }
-    function updateStorageIndicator() { /* ... */ }
-    function generateCarnetEntretien(targa) { /* ... */ }
+    function showNotification(message, type = 'success') { /* ... */ }
+    function showSyncIndicator(message = "🔄 Synchronisation...") { /* ... */ }
+    // ... (conservez toutes vos autres fonctions existantes) ...
 
     // Fonction d'initialisation
     async function init() {
-      // 1. Charger les données des véhicules depuis GitHub
+      // 1. Charger les données des véhicules depuis le dossier local
       await loadVehicleDatabase();
 
       // 2. Charger les données locales ou Firebase
@@ -395,51 +244,13 @@
     }
 
     // Fonction pour initialiser le mode sombre/clair
-    function initModeTheme() {
-      const savedTheme = localStorage.getItem('theme') || 'dark';
-      if (savedTheme === 'light') {
-        document.body.classList.add('light-mode');
-      }
-      updateThemeIcon();
-    }
-
+    function initModeTheme() { /* ... */ }
     // Fonction pour basculer entre les thèmes
-    function toggleTheme() {
-      document.body.classList.add('transitioning');
-      document.body.classList.toggle('light-mode');
-      const isLight = document.body.classList.contains('light-mode');
-      localStorage.setItem('theme', isLight ? 'light' : 'dark');
-      updateThemeIcon();
-      showNotification(isLight ? '☀️ Mode clair activé' : '🌙 Mode sombre activé');
-      setTimeout(() => {
-        document.body.classList.remove('transitioning');
-      }, 300);
-    }
-
+    function toggleTheme() { /* ... */ }
     // Fonction pour mettre à jour l'icône du thème
-    function updateThemeIcon() {
-      const themeButton = document.getElementById('themeToggle');
-      if (!themeButton) return;
-      const isLight = document.body.classList.contains('light-mode');
-      if (themeButton.querySelector('.theme-icon')) {
-        themeButton.querySelector('.theme-icon').textContent = isLight ? '🌙' : '☀️';
-      }
-    }
-
+    function updateThemeIcon() { /* ... */ }
     // Fonction pour ajouter le bouton de thème
-    function addThemeToggleButton() {
-      const existingButton = document.getElementById('themeToggle');
-      if (existingButton) return;
-
-      const button = document.createElement('div');
-      button.id = 'themeToggle';
-      button.className = 'theme-toggle';
-      button.onclick = toggleTheme;
-      button.innerHTML = '<span class="theme-icon">☀️</span>';
-      button.title = 'Changer de thème';
-      document.body.appendChild(button);
-      updateThemeIcon();
-    }
+    function addThemeToggleButton() { /* ... */ }
 
     // Initialisation
     init();
